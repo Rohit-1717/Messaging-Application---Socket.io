@@ -25,7 +25,7 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/message", messageRoute);
+app.use("/api/messages", messageRoute);
 
 app.listen(PORT, () => {
   console.log("Server is listening on Port: " + PORT);
