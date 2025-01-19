@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import EmojiPicker from "emoji-picker-react";
 import { useChatStore } from "../store/useChatStore";
 import { BotMessageSquare, Send, X, Image, Smile } from "lucide-react";
 import toast from "react-hot-toast";
@@ -6,6 +7,7 @@ import toast from "react-hot-toast";
 function MessageInput() {
   const [text, setText] = useState("");
   const [previewImage, setPreviewImage] = useState(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const fileInputRef = useRef(null);
   const { sendMessage } = useChatStore();
 
@@ -15,19 +17,14 @@ function MessageInput() {
 
     if (!file.type.startsWith("image/")) {
       toast.error("Invalid file type. Please select an image file.");
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
 
-    // Add file size check (optional)
     const MAX_SIZE = 5 * 1024 * 1024; // 5MB
     if (file.size > MAX_SIZE) {
       toast.error("File is too large. Please select an image under 5MB.");
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
 
@@ -37,18 +34,18 @@ function MessageInput() {
     };
     reader.onerror = () => {
       toast.error("Error reading file. Please try again.");
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      if (fileInputRef.current) fileInputRef.current.value = "";
     };
     reader.readAsDataURL(file);
   };
 
   const removeImage = () => {
     setPreviewImage(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleEmojiClick = (emojiObject) => {
+    setText((prev) => prev + emojiObject.emoji);
   };
 
   const handleSentMessage = async (e) => {
@@ -59,9 +56,8 @@ function MessageInput() {
 
       setText("");
       setPreviewImage(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      setShowEmojiPicker(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (error) {
       console.error("Failed to send message:", error);
       toast.error("Failed to send message. Please try again.");
@@ -69,7 +65,7 @@ function MessageInput() {
   };
 
   return (
-    <div className="p-4 w-full">
+    <div className="p-4 w-full relative">
       {previewImage && (
         <div className="mb-3 flex items-center gap-2">
           <div className="relative">
@@ -99,7 +95,11 @@ function MessageInput() {
             onChange={(e) => setText(e.target.value)}
           />
           <div className="absolute right-2 flex items-center gap-1">
-            <button type="button" className="btn btn-ghost btn-xs btn-circle">
+            <button
+              type="button"
+              className="btn btn-ghost btn-xs btn-circle"
+              onClick={() => setShowEmojiPicker((prev) => !prev)}
+            >
               <Smile size={16} className="text-zinc-400" />
             </button>
             <button
@@ -135,6 +135,17 @@ function MessageInput() {
           <BotMessageSquare size={20} />
         </button>
       </form>
+
+      {showEmojiPicker && (
+        <div className="absolute bottom-16 right-20 bg-base-200 rounded-lg shadow-lg z-10">
+          <EmojiPicker
+            onEmojiClick={handleEmojiClick}
+            width={350}
+            height={300}
+            theme="dark"
+          />
+        </div>
+      )}
     </div>
   );
 }

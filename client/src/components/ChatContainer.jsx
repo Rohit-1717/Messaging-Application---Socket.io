@@ -12,23 +12,24 @@ function ChatContainer() {
     getMessages,
     isMessagesLoading,
     selectedUser,
-    subsCribeToMessages,
-    unSubscribeFromMessages,
+    subscribeToMessages,
+    unsubscribeFromMessages,
   } = useChatStore();
 
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
 
   useEffect(() => {
-    getMessages(selectedUser._id);
-    subsCribeToMessages();
+    if (selectedUser?._id) {
+      getMessages(selectedUser._id);
+      subscribeToMessages();
+    }
 
-    return () => unSubscribeFromMessages();
+    return () => unsubscribeFromMessages();
   }, [
-    selectedUser._id,
-    selectedUser,
-    subsCribeToMessages,
-    unSubscribeFromMessages,
+    selectedUser?._id,
+    subscribeToMessages,
+    unsubscribeFromMessages,
     getMessages,
   ]);
 
@@ -40,7 +41,7 @@ function ChatContainer() {
 
   if (isMessagesLoading) {
     return (
-      <div className="flex-1 flex flex-col  overflow-auto">
+      <div className="flex-1 flex flex-col overflow-auto">
         <ChatHeader />
         <MessageSkeleton />
         <MessageInput />
@@ -61,7 +62,7 @@ function ChatContainer() {
             ref={messageEndRef}
           >
             <div className="chat-image avatar">
-              <div className="size-10 rounded-full border">
+              <div className="w-10 h-10 rounded-full border">
                 <img
                   src={
                     message.senderId === authUser._id
@@ -79,7 +80,9 @@ function ChatContainer() {
                 {formatMessageTime(message.createdAt)}
               </time>
             </div>
-            <div className="chat-bubble flex flex-col">
+            <div
+              className={`chat-bubble flex flex-col p-4 max-w-[80%] break-words`}
+            >
               {message.image && (
                 <img
                   src={message.image}
@@ -87,7 +90,7 @@ function ChatContainer() {
                   className="sm:max-w-[200px] rounded-md mb-2"
                 />
               )}
-              {message.text && <p>{message.text}</p>}
+              {message.text && <p className="break-words">{message.text}</p>}
             </div>
           </div>
         ))}
