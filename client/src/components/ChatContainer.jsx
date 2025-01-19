@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useChatStore } from "../store/useChatStore";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
@@ -7,14 +7,36 @@ import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils.js";
 
 function ChatContainer() {
-  const { messages, getMessages, isMessagesLoading, selectedUser } =
-    useChatStore();
+  const {
+    messages,
+    getMessages,
+    isMessagesLoading,
+    selectedUser,
+    subsCribeToMessages,
+    unSubscribeFromMessages,
+  } = useChatStore();
 
   const { authUser } = useAuthStore();
+  const messageEndRef = useRef(null);
 
   useEffect(() => {
     getMessages(selectedUser._id);
-  }, [selectedUser._id, selectedUser]);
+    subsCribeToMessages();
+
+    return () => unSubscribeFromMessages();
+  }, [
+    selectedUser._id,
+    selectedUser,
+    subsCribeToMessages,
+    unSubscribeFromMessages,
+    getMessages,
+  ]);
+
+  useEffect(() => {
+    if (messageEndRef.current) {
+      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   if (isMessagesLoading) {
     return (
@@ -36,6 +58,7 @@ function ChatContainer() {
             className={`chat ${
               message.senderId === authUser._id ? "chat-end" : "chat-start"
             }`}
+            ref={messageEndRef}
           >
             <div className="chat-image avatar">
               <div className="size-10 rounded-full border">
@@ -44,7 +67,8 @@ function ChatContainer() {
                     message.senderId === authUser._id
                       ? authUser.profilePic ||
                         `https://avatar.iran.liara.run/username?username=${authUser?.fullName}`
-                      : selectedUser.profilePic
+                      : selectedUser.profilePic ||
+                        `https://avatar.iran.liara.run/username?username=${selectedUser?.fullName}`
                   }
                   alt="Profile Image"
                 />

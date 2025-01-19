@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 function MessageInput() {
   const [text, setText] = useState("");
   const [previewImage, setPreviewImage] = useState(null);
-  const fileInputRef = useRef();
+  const fileInputRef = useRef(null);
   const { sendMessage } = useChatStore();
 
   const handleImageChange = (e) => {
