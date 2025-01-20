@@ -31,6 +31,15 @@
 
 ---
 
+## 🌍 Live Demo
+
+Experience **Connectify Messenger** in action:  
+**[Live Link](https://messaging-application-socket-io.onrender.com/)**  
+
+
+
+---
+
 ## 📸 Application Views
 
 ### Desktop View
