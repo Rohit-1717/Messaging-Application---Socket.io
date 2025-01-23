@@ -2,8 +2,10 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
+import { useConnectifyAi } from "./useConnectifyAi";
 
-const BASE_URL = import.meta.env.MODE=== "development"?"http://localhost:8000" :"/";
+const BASE_URL =
+  import.meta.env.MODE === "development" ? "http://localhost:8000" : "/";
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,
@@ -58,11 +60,16 @@ export const useAuthStore = create((set, get) => ({
   },
 
   logout: async () => {
+    const { clearResponse } = useConnectifyAi.getState(); // Get clearResponse method
+
     try {
       await axiosInstance.post("/auth/logout");
       set({ authUser: null });
       toast.success("Logged out successfully");
       get().disconnectSocket();
+
+      // Clear AI responses on logout
+      clearResponse();
     } catch (error) {
       toast.error("Error logging out");
       console.log("Error logging out", error.response.data);

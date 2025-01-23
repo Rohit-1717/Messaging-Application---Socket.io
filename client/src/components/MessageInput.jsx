@@ -51,9 +51,11 @@ function MessageInput() {
     setText((prev) => prev + emojiObject.emoji);
   };
 
-  const handleSentMessage = async (e) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
+    
     if (!text.trim() && !previewImage) return;
+
     try {
       await sendMessage({ text: text.trim(), image: previewImage });
 
@@ -65,6 +67,18 @@ function MessageInput() {
       console.error("Failed to send message:", error);
       toast.error("Failed to send message. Please try again.");
     }
+  };
+
+  const handleKeyDown = (e) => {
+    // If Enter key is pressed and input is empty, open the AI panel
+    if (e.key === "Enter" && !text.trim() && !previewImage) {
+      e.preventDefault(); // Prevent the default form submission
+      setAiPanelOpen(true);
+    }
+  };
+
+  const handleAiPanelOpen = () => {
+    setAiPanelOpen(true);
   };
 
   return (
@@ -88,7 +102,7 @@ function MessageInput() {
         </div>
       )}
 
-      <form onSubmit={handleSentMessage} className="flex items-center gap-2">
+      <form onSubmit={handleSendMessage} className="flex items-center gap-2">
         <div className="flex-1 relative flex items-center">
           <input
             type="text"
@@ -96,6 +110,7 @@ function MessageInput() {
             placeholder="Type a message..."
             value={text}
             onChange={(e) => setText(e.target.value)}
+            onKeyDown={handleKeyDown} // Handle key down events
           />
           <div className="absolute right-2 flex items-center gap-1">
             <button
@@ -132,9 +147,9 @@ function MessageInput() {
         </button>
 
         <button
-          type="button"
+          type="button" // Keep as button to avoid form submission
           className="btn btn-primary btn-circle size-10 sm:size-12"
-          onClick={() => setAiPanelOpen(true)} // Opens AiPanel
+          onClick={handleAiPanelOpen} // Opens AiPanel
         >
           <BotMessageSquare size={20} />
         </button>

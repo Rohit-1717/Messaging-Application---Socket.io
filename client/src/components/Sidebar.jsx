@@ -17,6 +17,13 @@ function Sidebar() {
     return <SidebarSkeleton />;
   }
 
+  // Sort users: online users first
+  const sortedUsers = [...users].sort((a, b) => {
+    const aIsOnline = onlineUsers.includes(a._id);
+    const bIsOnline = onlineUsers.includes(b._id);
+    return bIsOnline - aIsOnline;
+  });
+
   return (
     <aside className="h-full w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200">
       <div className="border-b border-base-300 w-full p-5">
@@ -27,14 +34,14 @@ function Sidebar() {
         {/* TODO: Add a search bar here */}
       </div>
       <div className="overflow-y-auto w-full py-3">
-        {users.map((user) => {
-          const isUserSelected = selectedUser?._id === user._id; // Fixed comparison
+        {sortedUsers.map((user) => {
+          const isUserSelected = selectedUser?._id === user._id;
           const isUserOnline = onlineUsers.includes(user._id);
 
           return (
             <button
               key={user._id}
-              onClick={() => setSelectedUser(user)} 
+              onClick={() => setSelectedUser(user)}
               className={`w-full p-3 flex items-center gap-3 hover:bg-base-300 transition-colors ${
                 isUserSelected ? "bg-base-300 ring-1 ring-base-300" : ""
               }`}

@@ -5,6 +5,7 @@ import path from "path";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.route.js";
 import messageRoute from "./routes/message.route.js";
+import connectifyAi from "./routes/connectifyAi.route.js";
 import { connectToMongoDB } from "./lib/db.js";
 import { app, server } from "./lib/socket.js";
 
@@ -27,6 +28,7 @@ app.use(
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoute);
+app.use("/api/ai", connectifyAi);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../client/dist")));
