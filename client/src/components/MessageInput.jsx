@@ -3,11 +3,14 @@ import EmojiPicker from "emoji-picker-react";
 import { useChatStore } from "../store/useChatStore";
 import { BotMessageSquare, Send, X, Image, Smile } from "lucide-react";
 import toast from "react-hot-toast";
+import AiPanel from "./AiPanel";
 
 function MessageInput() {
   const [text, setText] = useState("");
   const [previewImage, setPreviewImage] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [isAiPanelOpen, setAiPanelOpen] = useState(false);
+
   const fileInputRef = useRef(null);
   const { sendMessage } = useChatStore();
 
@@ -131,9 +134,12 @@ function MessageInput() {
         <button
           type="button"
           className="btn btn-primary btn-circle size-10 sm:size-12"
+          onClick={() => setAiPanelOpen(true)} // Opens AiPanel
         >
           <BotMessageSquare size={20} />
         </button>
+        {/* AiPanel Component */}
+        <AiPanel isOpen={isAiPanelOpen} onClose={() => setAiPanelOpen(false)} />
       </form>
 
       {showEmojiPicker && (
