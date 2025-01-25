@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils.js";
+import ImagePreviewModal from "./ImagePreviewModal"; // Import the new component
 
 function ChatContainer() {
   const {
@@ -18,6 +19,7 @@ function ChatContainer() {
 
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
+  const [previewImage, setPreviewImage] = useState(null);
 
   useEffect(() => {
     if (selectedUser?._id) {
@@ -38,6 +40,10 @@ function ChatContainer() {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
+
+  const handleImagePreview = (imageUrl, messageText) => {
+    setPreviewImage({ url: imageUrl, text: messageText });
+  };
 
   if (isMessagesLoading) {
     return (
@@ -87,7 +93,10 @@ function ChatContainer() {
                 <img
                   src={message.image}
                   alt="Attachment"
-                  className="sm:max-w-[200px] rounded-md mb-2"
+                  className="sm:max-w-[200px] rounded-md mb-2 cursor-pointer"
+                  onClick={() =>
+                    handleImagePreview(message.image, message.text)
+                  }
                 />
               )}
               {message.text && <p className="break-words">{message.text}</p>}
@@ -96,6 +105,14 @@ function ChatContainer() {
         ))}
       </div>
       <MessageInput />
+
+      {previewImage && (
+        <ImagePreviewModal
+          imageUrl={previewImage.url}
+          message={previewImage.text}
+          onClose={() => setPreviewImage(null)}
+        />
+      )}
     </div>
   );
 }
