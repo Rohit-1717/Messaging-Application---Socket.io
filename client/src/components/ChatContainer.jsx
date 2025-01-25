@@ -7,6 +7,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils.js";
 import ImagePreviewModal from "./ImagePreviewModal";
 
+
 function ChatContainer() {
   const {
     messages,

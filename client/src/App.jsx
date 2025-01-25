@@ -9,12 +9,13 @@ import { useAuthStore } from "./store/useAuthStore";
 import { useEffect } from "react";
 import { Loader } from "lucide-react";
 import { useThemeStore } from "./store/useThemeStore";
+import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
-  const { authUser, checkAuth, isCheckingAuth , onlineUsers } = useAuthStore();
-  
+  const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
+
   const { theme } = useThemeStore();
-  console.log({onlineUsers});
+  console.log({ onlineUsers });
 
   useEffect(() => {
     checkAuth();
@@ -30,7 +31,7 @@ function App() {
     );
   }
   return (
-    <div data-theme={theme} >
+    <div data-theme={theme}>
       <Navbar />
       <Routes>
         <Route
@@ -50,6 +51,7 @@ function App() {
           path="/profile"
           element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
         />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
       </Routes>
     </div>
   );
