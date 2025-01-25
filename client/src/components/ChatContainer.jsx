@@ -5,7 +5,7 @@ import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils.js";
-import ImagePreviewModal from "./ImagePreviewModal"; // Import the new component
+import ImagePreviewModal from "./ImagePreviewModal";
 
 function ChatContainer() {
   const {
@@ -20,6 +20,7 @@ function ChatContainer() {
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
   const [previewImage, setPreviewImage] = useState(null);
+  const [previewVideo, setPreviewVideo] = useState(null);
 
   useEffect(() => {
     if (selectedUser?._id) {
@@ -43,6 +44,10 @@ function ChatContainer() {
 
   const handleImagePreview = (imageUrl, messageText) => {
     setPreviewImage({ url: imageUrl, text: messageText });
+  };
+
+  const handleVideoPreview = (videoUrl, messageText) => {
+    setPreviewVideo({ url: videoUrl, text: messageText });
   };
 
   if (isMessagesLoading) {
@@ -99,6 +104,16 @@ function ChatContainer() {
                   }
                 />
               )}
+              {message.video && (
+                <video
+                  src={message.video}
+                  alt="Video"
+                  className="sm:max-w-[200px] rounded-md mb-2 cursor-pointer"
+                  onClick={() =>
+                    handleVideoPreview(message.video, message.text)
+                  }
+                />
+              )}
               {message.text && <p className="break-words">{message.text}</p>}
             </div>
           </div>
@@ -111,6 +126,14 @@ function ChatContainer() {
           imageUrl={previewImage.url}
           message={previewImage.text}
           onClose={() => setPreviewImage(null)}
+        />
+      )}
+
+      {previewVideo && (
+        <VideoPreviewModal
+          videoUrl={previewVideo.url}
+          message={previewVideo.text}
+          onClose={() => setPreviewVideo(null)}
         />
       )}
     </div>
