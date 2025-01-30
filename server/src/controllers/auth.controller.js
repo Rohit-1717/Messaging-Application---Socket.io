@@ -184,7 +184,12 @@ export const forgotPasswordSendEmail = async (req, res) => {
       expiresIn: "15m",
     });
 
-    const link = `${process.env.FRONTEND_URL}/reset-password/${token}`;
+    const FRONTEND_URL =
+      process.env.NODE_ENV === "production"
+        ? "https://messaging-application-socket-io.onrender.com"
+        : process.env.FRONTEND_URL;
+
+    const link = `${FRONTEND_URL}/reset-password/${token}`;
 
     const mailOptions = {
       from: process.env.EMAIL_FROM,
