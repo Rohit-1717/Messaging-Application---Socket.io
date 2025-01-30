@@ -5,7 +5,6 @@ import LoginPage from "./pages/LoginPage";
 import SettingPage from "./pages/SettingPage";
 import ProfilePage from "./pages/ProfilePage";
 import HomePage from "./pages/HomePage";
-import SendVerificationEmail from "./components/SendVerificationEmail";
 import { useAuthStore } from "./store/useAuthStore";
 import { useEffect } from "react";
 import { Loader } from "lucide-react";
