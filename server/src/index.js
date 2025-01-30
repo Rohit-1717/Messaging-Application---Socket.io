@@ -20,12 +20,14 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "http://localhost:5174",
+    origin: process.env.FRONTEND_URL,
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
+  
 );
 
+console.log(process.env.FRONTEND_URL)
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoute);
 app.use("/api/ai", connectifyAi);

@@ -1,20 +1,20 @@
 import React, { useState } from "react";
 import { Mail, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import toast from "react-hot-toast";
 import { useAuthStore } from "../store/useAuthStore";
 
 function ForgotPassword() {
+  const { sendForgotPasswordEmail, isSendingForgotPasswordEmail } =
+    useAuthStore();
   const [formData, setFormData] = useState({ email: "" });
-  const [isLoading, setIsLoading] = useState(false);
-  const { resetPassword } = useAuthStore();
 
   const validateForm = () => {
     if (!formData.email.trim()) {
-      toast.error("Email is required");
+      toast.error("Please enter your email address");
       return false;
     }
-    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
       toast.error("Please enter a valid email address");
       return false;
     }
@@ -24,15 +24,7 @@ function ForgotPassword() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      setIsLoading(true);
-      try {
-        await resetPassword(formData.email);
-        toast.success("Password reset link sent to your email.");
-      } catch (error) {
-        toast.error("Failed to send password reset link.");
-      } finally {
-        setIsLoading(false);
-      }
+      await sendForgotPasswordEmail(formData.email);
     }
   };
 
@@ -73,12 +65,12 @@ function ForgotPassword() {
           <button
             type="submit"
             className="btn btn-primary w-full h-12 text-base"
-            disabled={isLoading}
+            disabled={isSendingForgotPasswordEmail}
           >
-            {isLoading ? (
+            {isSendingForgotPasswordEmail ? (
               <>
                 <Loader2 className="size-5 animate-spin" />
-                Loading...
+                Sending...
               </>
             ) : (
               "Send Reset Link"
